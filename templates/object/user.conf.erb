@@ -32,7 +32,8 @@
   <%- end %>
   <%- if @vars.empty? != true  -%>
   <%- @vars.sort_by {|key, value| key}.each do |key, value| -%>
-  vars.<%= key %> = "<%= value %>"
+  vars.<%= key %> = <%- if value.is_a? String -%>"<%= value %>"<%- end -%>
+  <%- else -%><%= value %><%- end -%>
   <%- end -%>
   <%- end -%>
   <%- if @groups.length != 0 -%>
