@@ -15,7 +15,7 @@ apply ScheduledDowntime "<%= @name %>" to <%= @apply %> {
   ignore where <%= @ignore_where %>
   <%- end -%>
 
-  <%- if @fixed -%>
+  <%- unless @fixed.nil? -%>
   fixed = <%= @fixed %>
   <%- end -%>
   <%- if @duration -%>
