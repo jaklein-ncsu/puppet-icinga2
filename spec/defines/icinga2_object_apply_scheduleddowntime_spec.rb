@@ -80,4 +80,44 @@ describe 'icinga2::object::apply_scheduleddowntime' do
     it { should contain_file(object).with_content(/^\s*duration = 30m/) }
 
   end
+
+  context 'with fixed=false' do
+    let(:title) { 'testdowntime3' }
+
+    let(:params) do
+      {
+        :apply        => 'Host',
+        :assign_where => 'host.vars.stage == "meh"',
+        :ignore_where => 'host.vars.foobar',
+        :author       => 'spectest',
+        :comment      => 'spectest',
+        :ranges       => {
+          'sunday' => '02:00-03:00',
+          'monday' => '01:00-04:00'
+        },
+        :fixed        => false,
+        :duration     => '30m'
+      }
+    end
+
+    object = 'icinga2 apply scheduleddowntime testdowntime3'
+    object_file = '/etc/icinga2/objects/applys/testdowntime3.conf'
+
+    it { should contain_icinga2__object__apply_scheduleddowntime('testdowntime3') }
+    it { should contain_file(object).with({
+      :ensure => 'file',
+      :path => object_file,
+      :content => /apply ScheduledDowntime "testdowntime2" to Host/,
+    }) }
+    it { should contain_file(object).with_content(/^\s*author = "spectest"/) }
+    it { should contain_file(object).with_content(/^\s*comment = "spectest"/) }
+    it { should contain_file(object).with_content(/^\s*ranges = {\n\s*"monday" = "01:00-04:00"\n\s*"sunday" = "02:00-03:00"\n\s*}/) }
+
+    it { should contain_file(object).with_content(/^\s*ignore where host.vars.foobar/) }
+
+    it { should contain_file(object).with_content(/^\s*fixed = false/) }
+    it { should contain_file(object).with_content(/^\s*duration = 30m/) }
+
+  end
+
 end
